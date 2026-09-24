@@ -15,23 +15,11 @@
         }
       ],
       "recallType": {
-        "selected": {
-          "value": "FIXED_TERM",
-          "details": "My details"
-        },
+        "selected": { "value": "FIXED_TERM", "details": "My details" },
         "allOptions": [
-          {
-            "value": "NO_RECALL",
-            "text": "No recall"
-          },
-          {
-            "value": "FIXED_TERM",
-            "text": "Fixed term"
-          },
-          {
-            "value": "STANDARD",
-            "text": "Standard"
-          }
+          { "value": "NO_RECALL", "text": "No recall" },
+          { "value": "FIXED_TERM", "text": "Fixed term" },
+          { "value": "STANDARD", "text": "Standard" }
         ]
       },
       "sendSpoRationaleToDelius": false,
@@ -55,18 +43,9 @@
         "selected": "YES_PRISON",
         "details": "Bromsgrove Police Station\r\nLondon",
         "allOptions": [
-          {
-            "value": "YES_PRISON",
-            "text": "Yes, prison custody"
-          },
-          {
-            "value": "YES_POLICE",
-            "text": "Yes, police custody"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
+          { "value": "YES_PRISON", "text": "Yes, prison custody" },
+          { "value": "YES_POLICE", "text": "Yes, police custody" },
+          { "value": "NO", "text": "No" }
         ]
       },
       "localPoliceContact": {
@@ -87,43 +66,25 @@
       "hasVictimsInContactScheme": {
         "selected": "YES",
         "allOptions": [
-          {
-            "value": "YES",
-            "text": "Yes"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          },
-          {
-            "value": "NOT_APPLICABLE",
-            "text": "N/A"
-          }
+          { "value": "YES", "text": "Yes" },
+          { "value": "NO", "text": "No" },
+          { "value": "NOT_APPLICABLE", "text": "N/A" }
         ]
       },
       "indeterminateSentenceType": {
         "selected": "LIFE",
         "allOptions": [
-          {
-            "value": "LIFE",
-            "text": "Life sentence"
-          },
+          { "value": "LIFE", "text": "Life sentence" },
           {
             "value": "IPP",
             "text": "Imprisonment for public protection (IPP)"
           },
-          {
-            "value": "DPP",
-            "text": "Detention for public protection (DPP)"
-          },
+          { "value": "DPP", "text": "Detention for public protection (DPP)" },
           {
             "value": "DHMP",
             "text": "Detention at His Majesty’s pleasure (DHMP)"
           },
-          {
-            "value": "NO",
-            "text": "No"
-          }
+          { "value": "NO", "text": "No" }
         ]
       },
       "dateVloInformed": "2024-01-01",
@@ -218,20 +179,13 @@
       },
       "licenceConditionsBreached": {
         "standardLicenceConditions": {
-          "selected": [
-            "GOOD_BEHAVIOUR"
-          ],
+          "selected": ["GOOD_BEHAVIOUR"],
           "allOptions": [
-            {
-              "value": "GOOD_BEHAVIOUR",
-              "text": "They had good behaviour"
-            }
+            { "value": "GOOD_BEHAVIOUR", "text": "They had good behaviour" }
           ]
         },
         "additionalLicenceConditions": {
-          "selected": [
-            "NST14"
-          ],
+          "selected": ["NST14"],
           "selectedOptions": null,
           "allOptions": [
             {
@@ -267,18 +221,9 @@
       "isUnderIntegratedOffenderManagement": {
         "selected": "YES",
         "allOptions": [
-          {
-            "value": "YES",
-            "text": "Yes"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          },
-          {
-            "value": "NOT_APPLICABLE",
-            "text": "N/A"
-          }
+          { "value": "YES", "text": "Yes" },
+          { "value": "NO", "text": "No" },
+          { "value": "NOT_APPLICABLE", "text": "N/A" }
         ]
       },
       "indexOffenceDetails": "Offence details",
@@ -321,10 +266,7 @@
             "value": "BEHAVIOUR_LIKELY_TO_RESULT_SEXUAL_OR_VIOLENT_OFFENCE",
             "text": "behaviour likely to result in sexual or violent behaviour"
           },
-          {
-            "value": "OUT_OF_TOUCH",
-            "text": "out of touch"
-          }
+          { "value": "OUT_OF_TOUCH", "text": "out of touch" }
         ]
       },
       "isMainAddressWherePersonCanBeFound": {
@@ -359,22 +301,10 @@
         "howWillAppointmentHappen": {
           "selected": "TELEPHONE",
           "allOptions": [
-            {
-              "value": "TELEPHONE",
-              "text": "Telephone"
-            },
-            {
-              "value": "VIDEO_CALL",
-              "text": "Video call"
-            },
-            {
-              "value": "OFFICE_VISIT",
-              "text": "Office visit"
-            },
-            {
-              "value": "HOME_VISIT",
-              "text": "Home visit"
-            }
+            { "value": "TELEPHONE", "text": "Telephone" },
+            { "value": "VIDEO_CALL", "text": "Video call" },
+            { "value": "OFFICE_VISIT", "text": "Office visit" },
+            { "value": "HOME_VISIT", "text": "Home visit" }
           ]
         },
         "dateTimeOfAppointment": "2022-04-24T20:39:00.000Z",
@@ -390,16 +320,12 @@
         "lastReleaseDate": "2022-09-02",
         "lastReleasingPrisonOrCustodialEstablishment": "HMP Holloway",
         "hasBeenReleasedPreviously": true,
-        "previousReleaseDates": [
-          "2020-02-01"
-        ]
+        "previousReleaseDates": ["2020-02-01"]
       },
       "previousRecalls": {
         "lastRecallDate": "2022-08-02",
         "hasBeenRecalledPreviously": true,
-        "previousRecallDates": [
-          "2021-06-01"
-        ]
+        "previousRecallDates": ["2021-06-01"]
       },
       "recommendationStartedDomainEventSent": true,
       "currentRoshForPartA": {
@@ -498,13 +424,7 @@
             "sentenceSequenceExpiryDate": "2024-01-01",
             "bookingId": 123,
             "terms": [
-              {
-                "years": 4,
-                "months": 4,
-                "weeks": 4,
-                "days": 4,
-                "code": "IMP"
-              }
+              { "years": 4, "months": 4, "weeks": 4, "days": 4, "code": "IMP" }
             ],
             "sentenceTypeDescription": "CJA03 Extended Determinate Sentence",
             "releaseDate": "2022-09-15T09:00:00",
@@ -588,10 +508,7 @@
         "recallId": "REC-11111",
         "failed": false,
         "failedMessage": null,
-        "uploaded": [
-          "Part A",
-          "Licence"
-        ]
+        "uploaded": ["Part A", "Licence"]
       },
       "isOver18": null,
       "isUnder18": null,
@@ -608,18 +525,9 @@
       "isRecalledOnNewChargedOrConvictedOffence": {
         "selected": "ONLY_CHARGED",
         "allOptions": [
-          {
-            "value": "CHARGED_AND_CONVICTED",
-            "text": "Charged and convicted"
-          },
-          {
-            "value": "ONLY_CHARGED",
-            "text": "Only charged"
-          },
-          {
-            "value": "NO",
-            "text": "No"
-          }
+          { "value": "CHARGED_AND_CONVICTED", "text": "Charged and convicted" },
+          { "value": "ONLY_CHARGED", "text": "Only charged" },
+          { "value": "NO", "text": "No" }
         ]
       },
       "isChargedWithOffence": true,
