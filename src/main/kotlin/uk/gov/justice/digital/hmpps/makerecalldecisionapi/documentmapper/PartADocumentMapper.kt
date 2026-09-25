@@ -272,6 +272,7 @@ internal class PartADocumentMapper(
     with(recommendation.whoCompletedPartA) {
       return PractitionerDetails(
         name = this?.name ?: "",
+        jobTitle = this?.jobTitle ?: "",
         telephone = this?.telephone ?: "",
         email = this?.email ?: "",
         region = regionService.getRegionName(this?.region),
@@ -291,6 +292,7 @@ internal class PartADocumentMapper(
     with(recommendation.practitionerForPartA) {
       PractitionerDetails(
         name = this?.name ?: "",
+        jobTitle = this?.jobTitle ?: "",
         telephone = this?.telephone ?: "",
         email = this?.email ?: "",
         region = regionService.getRegionName(this?.region),
@@ -306,6 +308,7 @@ internal class PartADocumentMapper(
     with(recommendation.practitionerForPartA) {
       PractitionerDetails(
         name = this?.name ?: "",
+        jobTitle = this?.jobTitle ?: "",
         telephone = this?.telephone ?: "",
         email = this?.email ?: "",
       )
@@ -314,6 +317,7 @@ internal class PartADocumentMapper(
     with(recommendation.whoCompletedPartA) {
       PractitionerDetails(
         name = this.name ?: "",
+        jobTitle = this.jobTitle ?: "",
         telephone = this.telephone ?: "",
         email = this.email ?: "",
       )
