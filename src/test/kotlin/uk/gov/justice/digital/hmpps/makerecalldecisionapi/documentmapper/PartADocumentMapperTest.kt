@@ -1619,6 +1619,7 @@ class PartADocumentMapperTest {
         localDeliveryUnit = "Incorrect LDU",
         whoCompletedPartA = WhoCompletedPartA(
           name = "Joe Bloggs",
+          jobTitle = "Probation Officer",
           telephone = "0123456789",
           email = "jb@example.com",
           region = "RegionCode",
@@ -1633,6 +1634,7 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
       assertThat(result.completedBy.name).isEqualTo("Joe Bloggs")
+      assertThat(result.completedBy.jobTitle).isEqualTo("Probation Officer")
       assertThat(result.completedBy.telephone).isEqualTo("0123456789")
       assertThat(result.completedBy.email).isEqualTo("jb@example.com")
       assertThat(result.completedBy.region).isEqualTo("Region Name")
@@ -1654,6 +1656,7 @@ class PartADocumentMapperTest {
         ),
         practitionerForPartA = PractitionerForPartA(
           name = "Joe Bloggs",
+          jobTitle = "Senior Probation Officer",
           telephone = "0123456789",
           email = "jb@example.com",
           region = "RegionCode",
@@ -1664,6 +1667,7 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
       assertThat(result.supervisingPractitioner.name).isEqualTo("Joe Bloggs")
+      assertThat(result.supervisingPractitioner.jobTitle).isEqualTo("Senior Probation Officer")
       assertThat(result.supervisingPractitioner.telephone).isEqualTo("0123456789")
       assertThat(result.supervisingPractitioner.email).isEqualTo("jb@example.com")
       assertThat(result.supervisingPractitioner.region).isEqualTo("Region Name")
@@ -1693,6 +1697,7 @@ class PartADocumentMapperTest {
       val result = partADocumentMapper.mapRecommendationDataToDocumentData(recommendation, metadata, featureFlags)
 
       assertThat(result.supervisingPractitioner.name).isEqualTo(EMPTY_STRING)
+      assertThat(result.supervisingPractitioner.jobTitle).isEqualTo(EMPTY_STRING)
       assertThat(result.supervisingPractitioner.telephone).isEqualTo(EMPTY_STRING)
       assertThat(result.supervisingPractitioner.email).isEqualTo(EMPTY_STRING)
       assertThat(result.supervisingPractitioner.region).isEqualTo(EMPTY_STRING)
@@ -1714,6 +1719,7 @@ class PartADocumentMapperTest {
       val recommendation = RecommendationResponse(
         whoCompletedPartA = WhoCompletedPartA(
           name = "Joe Bloggs",
+          jobTitle = "Probation Officer",
           telephone = "0123456789",
           email = "jb@example.com",
           region = "RegionCode",
@@ -1722,6 +1728,7 @@ class PartADocumentMapperTest {
         ),
         practitionerForPartA = PractitionerForPartA(
           name = "Jane Vloggs",
+          jobTitle = "Senior Probation Officer",
           telephone = "9876543210",
           email = "jv@example.com",
         ),
@@ -1731,6 +1738,8 @@ class PartADocumentMapperTest {
 
       assertThat(result.probationPractitionerDetails.name)
         .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.name else recommendation.practitionerForPartA?.name)
+      assertThat(result.probationPractitionerDetails.jobTitle)
+        .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.jobTitle else recommendation.practitionerForPartA?.jobTitle)
       assertThat(result.probationPractitionerDetails.telephone)
         .isEqualTo(if (isPersonProbationPractitionerForOffender) recommendation.whoCompletedPartA?.telephone else recommendation.practitionerForPartA?.telephone)
       assertThat(result.probationPractitionerDetails.email)

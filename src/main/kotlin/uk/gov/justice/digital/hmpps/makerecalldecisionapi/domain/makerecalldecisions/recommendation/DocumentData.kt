@@ -131,6 +131,7 @@ data class ValueWithDetails(
 
 data class PractitionerDetails(
   val name: String = "",
+  val jobTitle: String = "",
   val telephone: String = "",
   val email: String = "",
   val region: String = "",

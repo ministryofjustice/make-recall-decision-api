@@ -251,7 +251,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       val result = templateReplacementService.mappingsForTemplate(document)
 
       // then
-      assertThat(result.size).isEqualTo(165)
+      assertThat(result.size).isEqualTo(169)
       assertThat(result["custody_status"]).isEqualTo("Police Custody")
       assertThat(result["custody_status_details"]).isEqualTo("Bromsgrove Police Station, London")
       assertThat(result["recall_type"]).isEqualTo("Fixed")
@@ -418,6 +418,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["address_approved_condition"]).isEqualTo(CHECKED_CHECKBOX)
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(CHECKED_CHECKBOX)
       assertThat(result["no_travel_condition"]).isEqualTo(CHECKED_CHECKBOX)
+      assertThat(result["new_passport_condition"]).isEqualTo(CHECKED_CHECKBOX)
 
       assertThat(result["risk_of_suicide_or_self_harm"])
         .isEqualTo("\nRisk of suicide or self harm:\nRisk of suicide\n")
@@ -556,6 +557,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
       assertThat(result["address_approved_condition"]).isEqualTo(EMPTY_CHECKBOX)
       assertThat(result["no_work_undertaken_condition"]).isEqualTo(EMPTY_CHECKBOX)
       assertThat(result["no_travel_condition"]).isEqualTo(EMPTY_CHECKBOX)
+      assertThat(result["new_passport_condition"]).isEqualTo(EMPTY_CHECKBOX)
       assertThat(result["additional_conditions_breached"]).isEqualTo(EMPTY_STRING)
       assertThat(result["risk_to_children"]).isEqualTo(EMPTY_STRING)
       assertThat(result["risk_to_public"]).isEqualTo(EMPTY_STRING)
@@ -658,6 +660,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
           SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name,
           SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
           SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
+          SelectedStandardLicenceConditions.PASSPORT_DETAILS.name,
           SelectedStandardLicenceConditions.NAME_CHANGE.name,
           SelectedStandardLicenceConditions.CONTACT_DETAILS.name,
         ),
@@ -1005,6 +1008,7 @@ internal class TemplateReplacementServiceTest : ServiceTestBase() {
         SelectedStandardLicenceConditions.ADDRESS_APPROVED.name,
         SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name,
         SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name,
+        SelectedStandardLicenceConditions.PASSPORT_DETAILS.name,
         SelectedStandardLicenceConditions.NAME_CHANGE.name,
         SelectedStandardLicenceConditions.CONTACT_DETAILS.name,
       ),

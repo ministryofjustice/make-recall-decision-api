@@ -10,6 +10,7 @@ enum class PartATemplateVersion(val flagVariantKey: String, override val path: S
   RISK_TO_SELF("riskToSelf", "2026-02-02 - Risk to self"),
   FTR56("ftr56", "2026-03-31 - FTR56"),
   FTR56_OFFENCE_CONVICTION("ftr56OffenceConviction", "2026-07-29 - FTR56 Offence conviction"),
+  NEW_STANDARD_LICENCE_CONDITIONS("newStandardLicenceConditions", "2026-10-01 - New Standard Licence Conditions"),
   ;
 
   companion object {
