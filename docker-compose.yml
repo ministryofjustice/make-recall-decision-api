@@ -136,6 +136,8 @@ services:
       - ./fake-prison-api:/home/wiremock
 
   fake-flipt-api:
+    profiles:
+      - default
     image: wiremock/wiremock
     networks:
       - hmpps
@@ -147,6 +149,21 @@ services:
     command: --verbose --local-response-templating
     volumes:
       - ./fake-flipt-api:/home/wiremock
+
+  fake-flipt-api-new-standard-licence-conditions:
+    profiles:
+      - new-standard-licence-conditions
+    image: wiremock/wiremock
+    networks:
+      - hmpps
+    container_name: fake-flipt-api
+    ports:
+      - "9271:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/ping" ]
+    command: --verbose --local-response-templating
+    volumes:
+      - ./fake-flipt-api-new-standard-licence-conditions:/home/wiremock
 
 networks:
   hmpps:
