@@ -18,6 +18,7 @@ enum class SelectedStandardLicenceConditions(val cvlCode: String) {
   NO_TRAVEL_OUTSIDE_UK("7d416906-0e94-4fde-ae86-8339d339ccb7"),
   NAME_CHANGE("78A5F860-4791-48F2-B707-D6D4413850EE"),
   CONTACT_DETAILS("6FA6E492-F0AB-4E76-B868-63813DB44696"),
+  PASSPORT_DETAILS("21E5216D-C601-4282-A221-697834D0C7C4"),
   ;
 
   fun isCodeForCvl(cvlCode: String): Boolean = this.cvlCode.equals(cvlCode, ignoreCase = true)

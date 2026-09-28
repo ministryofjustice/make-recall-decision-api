@@ -183,12 +183,14 @@ internal class TemplateReplacementService(
       "mappa_level" to mappaConverter.formatMappaLevel(documentData.mappa),
       "mappa_category" to mappaConverter.formatMappaCategory(documentData.mappa),
       "completed_by_name" to documentData.completedBy.name,
+      "completed_by_job_title" to documentData.completedBy.jobTitle,
       "completed_by_telephone" to documentData.completedBy.telephone,
       "completed_by_email" to documentData.completedBy.email,
       "completed_by_region" to documentData.completedBy.region,
       "completed_by_local_delivery_unit" to documentData.completedBy.localDeliveryUnit,
       "completed_by_ppcs_query_emails" to documentData.completedBy.ppcsQueryEmails.joinToString("; "),
       "supervising_practitioner_name" to documentData.supervisingPractitioner.name,
+      "supervising_practitioner_job_title" to documentData.supervisingPractitioner.jobTitle,
       "supervising_practitioner_telephone" to documentData.supervisingPractitioner.telephone,
       "supervising_practitioner_email" to documentData.supervisingPractitioner.email,
       "supervising_practitioner_region" to documentData.supervisingPractitioner.region,
@@ -197,6 +199,7 @@ internal class TemplateReplacementService(
         "; ",
       ),
       "practitioner_name" to documentData.probationPractitionerDetails.name,
+      "practitioner_job_title" to documentData.probationPractitionerDetails.jobTitle,
       "practitioner_telephone" to documentData.probationPractitionerDetails.telephone,
       "practitioner_email" to documentData.probationPractitionerDetails.email,
       "revocation_order_recipients" to documentData.revocationOrderRecipients.joinToString("; "),
@@ -312,6 +315,7 @@ internal class TemplateReplacementService(
     "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
     "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
     "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "new_passport_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.PASSPORT_DETAILS.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
   )
 
   private fun convertToSelectedVulnerabilitiesMap(vulnerabilities: VulnerabilitiesRecommendation?): Map<String, String> = mapOf(
