@@ -312,7 +312,7 @@ internal class TemplateReplacementService(
     "no_offence_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_OFFENCE.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
     "keep_in_touch_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.KEEP_IN_TOUCH.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
     "officer_visit_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
-    "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
+    "address_approved_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.ADDRESS_APPROVED.name) == true || selectedConditions?.contains(SelectedStandardLicenceConditions.SUPERVISING_OFFICER_VISIT.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
     "no_work_undertaken_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_WORK_UNDERTAKEN.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
     "no_travel_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.NO_TRAVEL_OUTSIDE_UK.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
     "new_passport_condition" to (if (selectedConditions?.contains(SelectedStandardLicenceConditions.PASSPORT_DETAILS.name) == true) CHECKED_CHECKBOX else EMPTY_CHECKBOX),
