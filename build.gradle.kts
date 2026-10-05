@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.9"
-  kotlin("jvm") version "2.4.10"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.11"
+  kotlin("jvm") version "2.4.20"
   id("org.unbroken-dome.test-sets") version "4.1.0"
-  kotlin("plugin.jpa") version "2.4.10"
-  kotlin("plugin.spring") version "2.4.10"
-  kotlin("plugin.serialization") version "2.4.10"
+  kotlin("plugin.jpa") version "2.4.20"
+  kotlin("plugin.spring") version "2.4.20"
+  kotlin("plugin.serialization") version "2.4.20"
 }
 
 configurations {
@@ -67,7 +67,7 @@ dependencies {
   implementation("io.sentry:sentry-logback:8.53.0")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
