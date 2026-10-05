@@ -83,8 +83,8 @@ dependencies {
 
   // shedlock is currently unused, but is expected to be used recurringly with roll-outs
   // requiring recommendations to be soft deleted due to incompatibilities with new functionality
-  implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:7.10.1")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:7.10.1")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.boot:spring-boot-webtestclient")
