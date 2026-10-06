@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.makerecalldecisionapi.domain.makerecalldeci
 import org.mockserver.model.JsonBody.json
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.mapper.ResourceLoader
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomBoolean
+import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomInt
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDate
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomLocalDateTime
 import uk.gov.justice.digital.hmpps.makerecalldecisionapi.testutil.randomString
@@ -31,6 +32,11 @@ internal fun bookRecallToPpud(
   probationArea: String? = randomString(),
   receivedDateTime: LocalDateTime? = randomLocalDateTime(),
   sentenceDate: LocalDate? = randomLocalDate(),
+  totalSentenceLength: PpudSentenceLength? = PpudSentenceLength(
+    partYears = randomInt(),
+    partMonths = randomInt(),
+    partDays = randomInt(),
+  ),
   gender: String? = randomString(),
   ethnicity: String? = randomString(),
   firstNames: String? = randomString(),
@@ -57,6 +63,7 @@ internal fun bookRecallToPpud(
   probationArea,
   receivedDateTime,
   sentenceDate,
+  totalSentenceLength,
   gender,
   ethnicity,
   firstNames,
