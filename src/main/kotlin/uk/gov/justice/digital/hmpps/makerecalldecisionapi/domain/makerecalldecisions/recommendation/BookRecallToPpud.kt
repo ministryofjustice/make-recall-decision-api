@@ -22,6 +22,7 @@ data class BookRecallToPpud(
   val probationArea: String? = null,
   val receivedDateTime: LocalDateTime? = null,
   val sentenceDate: LocalDate? = null,
+  val totalSentenceLength: PpudSentenceLength? = null,
   val gender: String? = null,
   val ethnicity: String? = null,
   val firstNames: String? = null,

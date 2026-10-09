@@ -449,6 +449,7 @@
         "probationArea": "Kent",
         "receivedDateTime": "2024-01-01T12:00:00",
         "sentenceDate": "2024-01-01",
+        "totalSentenceLength": null,
         "gender": "Male",
         "ethnicity": "White British",
         "firstNames": "Joe",
