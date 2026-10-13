@@ -509,6 +509,7 @@
         "recallId": "REC-11111",
         "failed": false,
         "failedMessage": null,
+        "uploadFailedDocName": null,
         "uploaded": ["Part A", "Licence"]
       },
       "isOver18": null,

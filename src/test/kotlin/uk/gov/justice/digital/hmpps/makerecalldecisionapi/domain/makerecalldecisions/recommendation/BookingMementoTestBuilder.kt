@@ -11,6 +11,7 @@ fun bookingMemento(
   recallId: String? = randomString(),
   failed: Boolean? = randomBoolean(),
   failedMessage: String? = randomString(),
+  uploadFailedDocName: String? = randomString(),
   uploaded: List<String>? = listOf(randomString()),
 ) = BookingMemento(
   stage = stage,
@@ -20,5 +21,6 @@ fun bookingMemento(
   recallId = recallId,
   failed = failed,
   failedMessage = failedMessage,
+  uploadFailedDocName = uploadFailedDocName,
   uploaded = uploaded,
 )

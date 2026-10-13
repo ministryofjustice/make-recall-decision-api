@@ -337,6 +337,7 @@ class MrdTestDataBuilder {
           recallId = "REC-11111",
           failed = false,
           failedMessage = null,
+          uploadFailedDocName = null,
           uploaded = listOf("Part A", "Licence"),
         ),
         isRecalledOnNewChargedOrConvictedOffence = isRecalledOnNewChargedOrConvictedOffence(),
