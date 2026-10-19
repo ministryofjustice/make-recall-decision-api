@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.11"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.12"
   kotlin("jvm") version "2.4.20"
   id("org.unbroken-dome.test-sets") version "4.1.0"
   kotlin("plugin.jpa") version "2.4.20"
@@ -61,7 +61,7 @@ dependencies {
 
   implementation("org.springframework.boot:spring-boot-starter-flyway")
   implementation("org.flywaydb:flyway-database-postgresql")
-  implementation("org.postgresql:postgresql:42.7.13")
+  implementation("org.postgresql:postgresql:42.7.14")
 
   implementation("io.sentry:sentry-spring-boot-4:8.53.0")
   implementation("io.sentry:sentry-logback:8.53.0")
