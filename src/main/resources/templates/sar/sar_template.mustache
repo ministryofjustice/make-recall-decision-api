@@ -1037,6 +1037,103 @@
             </tr>
         </table>
         <!-- CounterSign names and emails have been removed from this section so as not to over-reveal staff information -->
+
+        <br>
+        <br>
+        <h5>Check and Book a Recall</h5>
+        {{#bookRecallToPpud}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">Current establishment</td>
+                    <td class="data-column-50">Releasing prison</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue currentEstablishment }}</td>
+                    <td>{{ optionalValue releasingPrison }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">Legislation released under</td>
+                    <td class="data-column-50">Legislation sentenced under</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue legislationReleasedUnder }}</td>
+                    <td>{{ optionalValue legislationSentencedUnder }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">Date and time PPCS received the recall</td>
+                    <td class="data-column-50">Police force</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue (formatDate receivedDateTime) }}</td>
+                    <td>{{ optionalValue policeForce }}</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">MAPPA level</td>
+                    {{#if (eq ppudSentenceId "ADD_NEW")}}
+                        <td class="data-column-50">Custody type</td>
+                    {{/if}}
+                </tr>
+                <tr>
+                    <td>{{ optionalValue mappaLevel }}</td>
+                    {{#if (eq ppudSentenceId "ADD_NEW")}}
+                        <td>{{ optionalValue custodyType }}</td>
+                    {{/if}}
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-50">Change offence or add comment</td>
+                </tr>
+                <tr>
+                    <td>{{ convertBoolean changeOffenceOrAddComment }}</td>
+                </tr>
+            </table>
+            {{#changeOffenceOrAddComment}}
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-50">Index offence</td>
+                        <td class="data-column-50">Index offence comment</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue indexOffence }}</td>
+                        <td>{{ optionalValue indexOffenceComment }}</td>
+                    </tr>
+                </table>
+            {{/changeOffenceOrAddComment}}
+            <table class="data-table">
+                <tr>
+                    <td class="data-column-100">Background/minute narrative</td>
+                </tr>
+                <tr>
+                    <td>{{ optionalValue minute }}</td>
+                </tr>
+            </table>
+            {{#totalSentenceLength}}
+                <p><b>Total sentence length</b></p>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-column-35">Years</td>
+                        <td class="data-column-35">Months</td>
+                        <td class="data-column-30">Days</td>
+                    </tr>
+                    <tr>
+                        <td>{{ optionalValue partYears }}</td>
+                        <td>{{ optionalValue partMonths }}</td>
+                        <td>{{ optionalValue partDays }}</td>
+                    </tr>
+                </table>
+            {{/totalSentenceLength}}
+        {{/bookRecallToPpud}}
+        {{^bookRecallToPpud}}
+            <p>No Data Held</p>
+        {{/bookRecallToPpud}}
+        <br>
     {{/recommendations}}
     {{^recommendations}}
         <p>No Data Held</p>
