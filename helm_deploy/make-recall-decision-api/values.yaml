@@ -33,6 +33,8 @@ generic-service:
   # Environment variables to load into the deployment
   env:
     JAVA_OPTS: "-Xmx512m"
+    APPLICATIONINSIGHTS_STATSBEAT_DISABLED: "true"
+    JAVA_TOOL_OPTIONS: "$(JAVA_PROXY_TOOL_OPTIONS) -XX:+ExitOnOutOfMemoryError -XX:MaxRAMPercentage=50.0"
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "default"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
@@ -63,6 +65,11 @@ generic-service:
       SPRING_DATA_REDIS_PASSWORD: "auth_token"
     make-recall-decision-api-application-insights:
       APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    hmpps-envoy-https-proxy-env:
+      HTTP_PROXY: "HTTP_PROXY"
+      HTTPS_PROXY: "HTTPS_PROXY"
+      NO_PROXY: "NO_PROXY"
+      JAVA_PROXY_TOOL_OPTIONS: "JAVA_PROXY_TOOL_OPTIONS"
 
   allowlist:
     north_shields_user: 194.33.192.1/24
