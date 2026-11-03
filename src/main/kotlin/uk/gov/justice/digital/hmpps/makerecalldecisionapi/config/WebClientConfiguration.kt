@@ -98,7 +98,7 @@ class WebClientConfiguration(
   }
 
   @Bean
-  fun webClientNoAuthNoMetrics(): WebClient = WebClient.create()
+  fun webClientNoAuthNoMetrics(builder: WebClient.Builder): WebClient = builder.build()
 
   @Bean
   fun authorizedClientManagerAppScope(
@@ -163,7 +163,7 @@ class WebClientConfiguration(
   fun cvlApiClientTimeoutCounter(): Counter = timeoutCounter(cvlApiRootUri)
 
   @Bean
-  fun gotenbergClient(): WebClient = getPlainWebClient(WebClient.builder(), gotenbergRootUri)
+  fun gotenbergClient(builder: WebClient.Builder): WebClient = getPlainWebClient(builder, gotenbergRootUri)
 
   @Bean
   fun gotenbergClientTimeoutCounter(): Counter = timeoutCounter(gotenbergRootUri)
