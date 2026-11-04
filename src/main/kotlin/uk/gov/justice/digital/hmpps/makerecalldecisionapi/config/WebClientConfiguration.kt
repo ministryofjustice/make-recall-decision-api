@@ -163,7 +163,7 @@ class WebClientConfiguration(
   fun cvlApiClientTimeoutCounter(): Counter = timeoutCounter(cvlApiRootUri)
 
   @Bean
-  fun gotenbergClient(builder: WebClient.Builder): WebClient = getPlainWebClient(builder, gotenbergRootUri)
+  fun gotenbergClient(): WebClient = getPlainWebClient(WebClient.builder(), gotenbergRootUri)
 
   @Bean
   fun gotenbergClientTimeoutCounter(): Counter = timeoutCounter(gotenbergRootUri)
