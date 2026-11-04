@@ -48,7 +48,7 @@ generic-service:
     SPRING_PROFILES_ACTIVE: "default"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     SENTRY_DSN: https://d51aaaaf56b547b8b0582ed0af80bdb7@o345774.ingest.sentry.io/6361157
-    GOTENBERG_ENDPOINT_URL: http://make-recall-decision-api-gotenberg
+    GOTENBERG_ENDPOINT_URL: http://make-recall-decision-api-gotenberg.svc.cluster.local
     HMPPS_SQS_USE_WEB_TOKEN: "true"
     SPRING_DATA_REDIS_SSL_ENABLED: "true"
 
