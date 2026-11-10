@@ -236,6 +236,7 @@ internal class PpudServiceTest : ServiceTestBase() {
     assertThat(ppudCreateRecallRequest.receivedDateTime).isEqualTo(LocalDateTime.of(2024, 6, 1, 15, 0))
     assertThat(ppudCreateRecallRequest.recallTypeForPpud).isEqualTo(recallTypeForPpud)
     assertThat(ppudCreateRecallRequest.riskOfContrabandDetails).isEqualTo("some details")
+    assertThat(ppudCreateRecallRequest.recommendedTo).isEqualTo(PpudUser("Name", "Recall Team"))
   }
 
   @Test
@@ -305,7 +306,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo(documentId)
     assertThat(ppudUploadMandatoryDocumentRequest.category).isEqualTo(ppudCategory)
-    assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
+    assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Recall Team"))
   }
 
   @Test
@@ -346,7 +347,7 @@ internal class PpudServiceTest : ServiceTestBase() {
 
     assertThat(ppudUploadMandatoryDocumentRequest.documentId).isEqualTo(documentId)
     assertThat(ppudUploadMandatoryDocumentRequest.title).isEqualTo("some title")
-    assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Team"))
+    assertThat(ppudUploadMandatoryDocumentRequest.owningCaseworker).isEqualTo(PpudUser("Name", "Recall Team"))
   }
 
   @Test
