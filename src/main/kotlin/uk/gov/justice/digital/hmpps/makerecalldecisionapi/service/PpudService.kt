@@ -40,6 +40,10 @@ internal class PpudService(
   private val ppudUserMappingRepository: PpudUserMappingRepository,
   private val recommendationDocumentRepository: RecommendationSupportingDocumentRepository,
 ) {
+  companion object {
+    const val DEFAULT_OWNING_TEAM = "Recall Team"
+  }
+
   fun search(request: PpudSearchRequest): PpudSearchResponse {
     val response = getValueAndHandleWrappedException(
       ppudAutomationApiClient.search(request),
@@ -105,7 +109,7 @@ internal class PpudService(
     username: String,
   ): PpudCreateRecallResponse {
     val ppudUser =
-      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, DEFAULT_OWNING_TEAM) }
         ?: throw NotFoundException("PPUD user mapping not found for username '$username'")
 
     val response = getValueAndHandleWrappedException(
@@ -141,7 +145,7 @@ internal class PpudService(
     username: String,
   ) {
     val ppudUser =
-      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, DEFAULT_OWNING_TEAM) }
         ?: throw NotFoundException("PPUD user mapping not found for username '$username'")
 
     val category = when (uploadMandatoryDocument.category) {
@@ -178,7 +182,7 @@ internal class PpudService(
     username: String,
   ) {
     val ppudUser =
-      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, it.ppudTeamName) }
+      ppudUserMappingRepository.findByUserNameIgnoreCase(username)?.let { PpudUser(it.ppudUserFullName, DEFAULT_OWNING_TEAM) }
         ?: throw NotFoundException("PPUD user mapping not found for username '$username'")
 
     val doc = recommendationDocumentRepository.findById(uploadMandatoryDocument.id)
