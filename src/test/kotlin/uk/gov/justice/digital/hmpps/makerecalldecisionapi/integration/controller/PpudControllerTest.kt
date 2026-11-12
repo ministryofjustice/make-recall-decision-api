@@ -392,7 +392,7 @@ class PpudControllerTest : IntegrationTestBase() {
       category = DocumentCategory.PartA,
       owningCaseworker = PpudUser(
         fullName = "User Name",
-        teamName = "Recall Team",
+        teamName = "Team 1",
       ),
     )
     ppudAutomationResponseMocker.ppudAutomationUploadMandatoryDocumentApiMatchResponse(
@@ -445,7 +445,7 @@ class PpudControllerTest : IntegrationTestBase() {
     val ppudUploadAdditionalDocumentRequest = PpudUploadAdditionalDocumentRequest(
       documentId = documentId,
       title = "some title",
-      owningCaseworker = PpudUser("User Name", "Recall Team"),
+      owningCaseworker = PpudUser("User Name", "Team 1"),
     )
     ppudAutomationResponseMocker.ppudAutomationUploadAdditionalDocumentApiMatchResponse(
       "123",
