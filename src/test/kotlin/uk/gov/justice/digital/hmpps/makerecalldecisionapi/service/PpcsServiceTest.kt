@@ -112,7 +112,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = ["X90902"])
+  @ValueSource(strings = ["SENT_TO_PPCS", "PP_DOCUMENT_CREATED"])
   fun `do not return results when a required status is missing`(presentStatus: String) {
     given(deliusClient.findByCrn("X90902")).willReturn(
       DeliusClient.PersonalDetailsOverview(
