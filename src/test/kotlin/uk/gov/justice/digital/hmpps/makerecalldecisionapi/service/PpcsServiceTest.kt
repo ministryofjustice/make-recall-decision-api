@@ -4,6 +4,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.BDDMockito.then
 import org.mockito.BDDMockito.times
 import org.mockito.junit.jupiter.MockitoExtension
@@ -105,7 +107,8 @@ internal class PpcsServiceTest : ServiceTestBase() {
     val result = PpcsService(recommendationRepository, recommendationStatusRepository, deliusClient, userAccessValidator, authenticationFacade)
       .search("X90902")
 
-    assertThat(result.results).isNotEmpty
+    assertThat(result.results).hasSize(1)
+    assertThat(result.results.single().recommendationId).isEqualTo(123L)
   }
 
   @Test
@@ -143,7 +146,7 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
     given(recommendationStatusRepository.findByRecommendationId(123L)).willReturn(
       listOf(
-        status("ANOTHER_STATUS", true, 123L),
+        status("PP_DOCUMENT_CREATED", true, 123L),
         status("SENT_TO_PPCS", true, 123L),
         status("REC_CLOSED", true, 123L),
       ),
@@ -197,9 +200,9 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
     given(recommendationStatusRepository.findByRecommendationId(1234L)).willReturn(
       listOf(
-        status("ANOTHER_STATUS", true, 123L),
-        status("PP_DOCUMENT_CREATED", true, 123L),
-        status("REC_CLOSED", true, 123L),
+        status("PP_DOCUMENT_CREATED", true, 1234L),
+        status("SENT_TO_PPCS", true, 1234L),
+        status("REC_CLOSED", true, 1234L),
       ),
     )
 
@@ -294,6 +297,69 @@ internal class PpcsServiceTest : ServiceTestBase() {
 
     then(recommendationStatusRepository).should(times(0)).findByRecommendationId(1234L)
     assertThat(result.results).isEmpty()
+  }
+
+  @ParameterizedTest
+  @CsvSource(
+    "false, false, false",
+    "true, false, true",
+  )
+  fun `only active statuses affect ppcs search`(
+    sentToPpcsActive: Boolean,
+    recClosedActive: Boolean,
+    expectedResult: Boolean,
+  ) {
+    given(deliusClient.findByCrn("X90902")).willReturn(
+      DeliusClient.PersonalDetailsOverview(
+        name = Name(
+          forename = "Harry",
+          middleName = null,
+          surname = "Bloggs",
+        ),
+        dateOfBirth = LocalDate.now(),
+        identifiers = DeliusClient.PersonalDetailsOverview.Identifiers(
+          crn = "X90902",
+          nomsNumber = "12345L",
+          croNumber = "123/XYZ",
+          bookingNumber = "1234567890",
+          pncNumber = "123",
+        ),
+        gender = "Male",
+        ethnicity = "test",
+        primaryLanguage = "test",
+      ),
+    )
+    given(deliusClient.getUserAccess(username, "X90902")).willReturn(noAccessLimitations())
+
+    given(recommendationRepository.findByCrn("X90902")).willReturn(
+      listOf(
+        RecommendationEntity(
+          id = 123L,
+          data = RecommendationModel(crn = "X90902"),
+        ),
+      ),
+    )
+
+    given(recommendationStatusRepository.findByRecommendationId(123L)).willReturn(
+      listOf(
+        status("PP_DOCUMENT_CREATED", true, 123L),
+        status("SENT_TO_PPCS", sentToPpcsActive, 123L),
+        status("REC_CLOSED", recClosedActive, 123L),
+      ),
+    )
+
+    val result = PpcsService(
+      recommendationRepository,
+      recommendationStatusRepository,
+      deliusClient,
+      userAccessValidator,
+      authenticationFacade,
+    ).search("X90902")
+
+    assertThat(result.results).hasSize(if (expectedResult) 1 else 0)
+    if (expectedResult) {
+      assertThat(result.results.single().recommendationId).isEqualTo(123L)
+    }
   }
 
   companion object {
