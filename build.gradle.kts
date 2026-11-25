@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.12"
-  kotlin("jvm") version "2.4.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.1.2"
+  kotlin("jvm") version "2.4.21"
   id("org.unbroken-dome.test-sets") version "4.1.0"
-  kotlin("plugin.jpa") version "2.4.20"
-  kotlin("plugin.spring") version "2.4.20"
-  kotlin("plugin.serialization") version "2.4.20"
+  kotlin("plugin.jpa") version "2.4.21"
+  kotlin("plugin.spring") version "2.4.21"
+  kotlin("plugin.serialization") version "2.4.21"
 }
 
 configurations {
